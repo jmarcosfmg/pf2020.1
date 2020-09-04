@@ -3,7 +3,7 @@
 (||)::Bool->Bool->Bool
 True || _ = True
 False || False = False
-False || a = a
+False || True = True
 
 
 --b) Apresente 2 definições para o operador lógico OU, utilizando expressões condicionais
@@ -38,11 +38,11 @@ fat_cas_padrao x = x * fat_cas_padrao(x-1)
 --termo da sequência de Fibonacci a seguir, sendo os casos base F0 = 0 e F1 = 1. Utilize a
 --definição recursiva vista em sala: fibo(n) = fibo(n-2) + fibo(n-1).
 
-fibonacci::Int->Int
-fibonacci x
+fibo::Int->Int
+fibo x
   | x == 0 = 0
   | x == 1 = 1
-  | otherwise = fibonacci(x-1) + fibonacci(x-2)
+  | otherwise = fibo(x-1) + fibo(x-2)
 
 --6) Dado um número inteiro n, escreva a função recursiva n_tri, que retorna o n-ésimo
 --termo da sequência de números triangulares, dada a seguir
@@ -65,14 +65,9 @@ n_triangular x
 --d) O n-ésimo termo (para n>0) é o primeiro elemento do enésimo par.
 --Ex: quarto par: (3,5) e quarto termo: 3 e décimo par: (55,89) e décimo termo: 55
 
-passo::(Int, Int)->(Int, Int)
-passo(x,y) = (y, y+x)
-par_fib::(Int)->(Int,Int)
-par_fib 1 = (1,1)
-par_fib n = (n, n+1)
-fibo2::Int->Int
-fibo2 n
-  | 
+fibo2::Int->(Int,Int)
+fibo2 n = (fibo n, fibo (n+1))
+  
 
 --8) Escreva a função potencia2, que calcula a potência de 2 elevada a um expoente n
 --de forma recursiva:
@@ -167,6 +162,7 @@ lista5 a b  = [a..b]
 --a função devolve a lista vazia. (*Dica: verificar se a é par ou ímpar)
 
 lista6 a b = [a+1 .. b-1]
+
 
 
 main :: IO ()

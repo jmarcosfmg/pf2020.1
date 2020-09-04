@@ -33,5 +33,14 @@ calculaPrecoPassagem preco dataAt dataNasc
   where
     idade = calculaIdade dataAt dataNasc
 
+
+gera1 = [x^2 | x <- [1..15], odd x, x > 4, x < 14]
+gera2 = [ (x,y) | x <- [1..4], y <- [x .. 2*x]]
+gera3 = [ lista | l1 <-[10..15], lista <-[1..l1] ]
+gera4 = [ (x,x+1) | x <- [1..16], odd x ]
+gera5 = [ x+y | (x,y) <- gera4]
+
+
+
 main :: IO ()
 main = return ()
