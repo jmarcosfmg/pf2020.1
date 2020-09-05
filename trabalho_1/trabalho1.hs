@@ -216,22 +216,98 @@ pessoas :: [Pessoa]
 pessoas = [ ("Rosa", 1.66,27, 'F'), ("Joao", 1.85, 26, 'C'), ("Maria", 1.55, 62, 'S'), ("Jose", 1.78, 42, 'C'), ("Paulo", 1.93, 25, 'S'), ("Clara", 1.70, 33, 'C'), ("Bob", 1.45, 21, 'C'), ("Rosana", 1.58,39, 'S'), ("Daniel", 1.74, 72, 'S'), ("Jocileide", 1.69, 18, 'S')]
 -- Escreva funções que, dada a lista pessoas, retornem:
 -- • A altura média entre todas as pessoas.
-alturaMedia listaPessoas = let
-                              listaAlturas = [altura | (_,altura,_,_)<-listaPessoas]
-                              somaAltura = sum(listaAlturas)
-                              nPessoas = length(listaAlturas)
-                            in 
-                              somaAltura/nPessoas
+alturaMedia::[Pessoa] -> Float
+alturaMedia listaPessoas = 
+    somaAltura / nPessoas
+    where
+      listaAlturas = [altura | (_,altura,_,_)<-listaPessoas]
+      somaAltura = sum(listaAlturas)
+      nPessoas = fromIntegral (length(listaAlturas))
     
 -- • A idade da pessoa mais nova.
+listaIdade::[Pessoa]->[Int]
+listaIdade listaPessoas = [idade | (_,_,idade,_)<- listaPessoas]
+
+menorIdade::[Pessoa] -> Int
+menorIdade listaPessoas = minimum(listaIdade listaPessoas)
+
 --- • O nome e o estado civil da pessoa mais velha.
+
+filtraPessoasPorIdade::[Pessoa]->Int->[Pessoa]
+filtraPessoasPorIdade listaPessoas idade_ = [pessoa | pessoa <- listaPessoas, (_,_,idadep, _) <- [pessoa] , idadep == idade_]
+
+nomeECivil::[Pessoa]->[(String,Char)]
+nomeECivil listaPessoas = [(nome,ecivil) | (nome, _, _, ecivil) <- filtraPessoasPorIdade listaPessoas (maximum (listaIdade listaPessoas))]
+
 --  • Todos os dados de cada pessoa com 50 anos ou mais.
+filtraMaior50Anos::[Pessoa]->[Pessoa]
+filtraMaior50Anos listaPessoas = [pessoa | pessoa <- listaPessoas, (_,_,idadep, _) <- [pessoa] , idadep >= 50]
+
 -- • O número de pessoas casadas com idade superior a i (ex: i = 35).
 
-main :: IO ()
-main = return ()
+filtraCasadosPorIdade::[Pessoa]->Int->[Pessoa]
+filtraCasadosPorIdade listaPessoas idade_= [pessoa | pessoa <- listaPessoas, (_,_,idadep, ecivil) <- [pessoa] , idadep > idade_, ecivil == 'C']
 
+--16) Escreva a função insere_ord a seguir, que recebe uma lista polimórfica
+--ordenada de elementos (critério de ordenação crescente) e um novo elemento x (do
+--mesmo tipo da lista) e retorna a nova lista com o novo elemento inserido
 
+insere_ord::Ord a => a->[a]->[a]
+insere_ord val (x:xs)
+  | (x:xs) == [] = []
+  | x < val = x:(insere_ord val xs)
+  | otherwise = val:(x:xs)
+  
+--17) Escreva a função reverte a seguir que recebe uma lista polimórfica e retorna uma
+--lista com seus elementos ao contrário.
+
+reverte::[a]->[a]
+reverte [] = []
+reverte (x:xs) = reverte xs ++ [x]
+
+--18) Escreva a função sem_repetidos a seguir que recebe uma lista polimórfica e
+--retorna uma lista sem elementos repetidos.
+sem_repetidos::Eq a =>[a]->[a]
+sem_repetidos [] = []
+sem_repetidos (x:xs) = [x]++(sem_repetidos [k | k<- xs , k /= x])
+  
+--19) Escreva a função notasTroco a seguir usando compreensão de listas que calcula
+--todas as combinações de notas para devolver o troco durante um pagamento, a partir de
+--uma lista com os valores das notas disponíveis (definido no arquivo .hs) e o valor do troco
+--x (argumento da função). Ex:
+--Considere disponiveis = [1,2,5,10,20,50,100]
+disponiveis = [1,2,5,10,20,50,100]
+notasTroco :: Int -> [[Int]]
+notasTroco 0 = [[]]
+notasTroco troco = [x:xs | x<-disponiveis, x<=troco, xs<-notasTroco(troco-x)]
+
+--20) Desenvolver a função nRainhas que resolve o Problema das N rainhas, para um valor
+--n dado como entrada. Esse problema consiste em posicionar N rainhas num tabuleiro N x
+--N de forma que nenhuma rainha possa capturar outra rainha em um único movimento. O
+--resultado deve conter uma lista de todas as soluções possíveis para o valor n dado como
+--entrada, em que cada solução é uma lista que apresenta a posição da linha de cada
+--rainha em ordem de coluna (colunas de 1 a N). Por exemplo, a lista [3,1,4,2] é uma
+--possível solução para o problema de 4 rainhas em um tabuleiro 4x4, onde: a 1a rainha é posicionada na 1a coluna e 3a linha, a 2a rainha é posicionada na 2a coluna e 1a linha, a 3a rainha é posicionada na 3a coluna e 4a linha e a 4a rainha é posicionada na 4a coluna e 2a linha. Note que essa não é a única solução para a instância de 4 rainhas e a lista [3,1,4,2]
+--é uma sub-lista da lista de saída.
+
+verificaDiagonalDesc::[Int]->Int->Int->Int->Bool
+verificaDiagonalDesc [] _ _ _ = False
+verificaDiagonalDesc (x:xs) linha coluna index
+  | x == (index + linha - coluna) = True
+  | otherwise = False || verificaDiagonalDesc xs linha coluna (index+1)
+
+verificaDiagonalAsc::[Int]->Int->Int->Int->Bool
+verificaDiagonalAsc [] _ _ _ = False
+verificaDiagonalAsc (x:xs) linha coluna index
+  | x == (linha + coluna - index) = True
+  | otherwise = False || verificaDiagonalAsc xs linha coluna (index+1)
+
+verificaLinha::[Int]->Int->Bool
+verificaLinha listaPosic linha = elem linha listaPosic
+
+nRainhas::Int->[[Int]]
+nRainhas 0 = [[]]
+nRainhas n = [x:xs | x<-[1..n], y<-[1..n], xs<-nRainhas(n-1), verificaDiagonalAsc(xs x y 1), verificaDiagonalDesc(xs x y 1), verificaLinha(xs x)]
 
 main :: IO ()
 main = return ()
