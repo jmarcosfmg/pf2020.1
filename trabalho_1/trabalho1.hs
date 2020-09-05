@@ -161,6 +161,77 @@ fizzbuzz n
   | mod n 5 == 0 = (fizzbuzz (n-1))++["Buzz"]
   | otherwise = (fizzbuzz (n-1))++["No"]
 
+--11) Escreva a função conta_ocorrencias que recebe dois elemento e uma lista
+--qualquer e retorna um tupla com o número de ocorrências de cada elemento na lista. Obs:
+--a lista deve ser percorrida uma única vez. O topo dos elementos deve ser o mesmo da
+--lista de entrada. Exemplo:
+conta_ocorrencias::Int->Int->[Int]->(Int,Int)
+conta_ocorrencias x y lista
+  | lista == [] = (0,0)
+  | cab == x = (1+respx, respy)
+  | cab == y = (respx, 1+respy)
+  | otherwise = conta_ocorrencias x y corpo
+  where 
+     (cab:corpo) = lista;
+     (respx, respy) = conta_ocorrencias x y corpo
+
+--12) Escreva a função unica_ocorrencia a seguir que recebe um elemento e uma lista
+--e verifica se existe uma única ocorrência do elemento na lista .
+unica_ocorrencia::Int->[Int]->Bool
+unica_ocorrencia n lista 
+  | quantidade  == 1 = True
+  | otherwise = False
+  where 
+     quantidade = length(filter (==n) lista)
+
+--13) Crie uma função que intercala os elementos de duas listas de qualquer tamanho
+--numa nova lista. Obs: as listas de entrada devem ser do mesmo tipo mas podem ter
+--tamanhos diferentes. Caso sejam diferentes, os elementos excedentes da lista maior
+--devem complementar a lista de saída
+intercala lista1 lista2
+  | lista1 == [] = lista2
+  | lista2 == [] = lista1
+  | otherwise = cabLista1 : cabLista2 : (intercala corpo1 corpo2)
+  where 
+     (cabLista1:corpo1) = lista1
+     (cabLista2:corpo2) = lista2
+
+--14) Defina novos tipos para representar os dados contidos numa agenda pessoal. Para
+--cada contato, armazene as informações: nome, endereço, telefone, e-mail. Em seguida,
+--crie uma função para recuperar o nome de um contato, a partir do email. Caso o número
+--não seja encontrado, retornar a mensagem “Email desconhecido”.
+type Contato = (String, String, String, String)
+type Agenda = [Contato]
+buscaNomePorEmail::[(String,String,String,String)]->String->String
+buscaNomePorEmail agenda email
+  | nome_ == [] = "Email desconhecido"
+  | otherwise = head(nome_)
+  where 
+    nome_ = [nome | (nome, endereco, telefone, email_) <- agenda, email_ == email]
+	
+-- 15) Seja o tipo Pessoa e a lista de pessoas a seguir.
+-- O tipo pessoa é uma tupla que inclui nome, altura, idade e estado civil (‘c’ ou ‘s’).
+type Pessoa = (String, Float, Integer, Char)
+pessoas :: [Pessoa]
+pessoas = [ ("Rosa", 1.66,27, 'F'), ("Joao", 1.85, 26, 'C'), ("Maria", 1.55, 62, 'S'), ("Jose", 1.78, 42, 'C'), ("Paulo", 1.93, 25, 'S'), ("Clara", 1.70, 33, 'C'), ("Bob", 1.45, 21, 'C'), ("Rosana", 1.58,39, 'S'), ("Daniel", 1.74, 72, 'S'), ("Jocileide", 1.69, 18, 'S')]
+-- Escreva funções que, dada a lista pessoas, retornem:
+-- • A altura média entre todas as pessoas.
+alturaMedia listaPessoas = let
+                              listaAlturas = [altura | (_,altura,_,_)<-listaPessoas]
+                              somaAltura = sum(listaAlturas)
+                              nPessoas = length(listaAlturas)
+                            in 
+                              somaAltura/nPessoas
+    
+-- • A idade da pessoa mais nova.
+--- • O nome e o estado civil da pessoa mais velha.
+--  • Todos os dados de cada pessoa com 50 anos ou mais.
+-- • O número de pessoas casadas com idade superior a i (ex: i = 35).
+
+main :: IO ()
+main = return ()
+
+
 
 main :: IO ()
 main = return ()
