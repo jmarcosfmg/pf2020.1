@@ -208,10 +208,10 @@ buscaNomePorEmail agenda email
   | otherwise = head(nome_)
   where 
     nome_ = [nome | (nome, endereco, telefone, email_) <- agenda, email_ == email]
-	
+
 -- 15) Seja o tipo Pessoa e a lista de pessoas a seguir.
 -- O tipo pessoa é uma tupla que inclui nome, altura, idade e estado civil (‘c’ ou ‘s’).
-type Pessoa = (String, Float, Integer, Char)
+type Pessoa = (String, Float, Int, Char)
 pessoas :: [Pessoa]
 pessoas = [ ("Rosa", 1.66,27, 'F'), ("Joao", 1.85, 26, 'C'), ("Maria", 1.55, 62, 'S'), ("Jose", 1.78, 42, 'C'), ("Paulo", 1.93, 25, 'S'), ("Clara", 1.70, 33, 'C'), ("Bob", 1.45, 21, 'C'), ("Rosana", 1.58,39, 'S'), ("Daniel", 1.74, 72, 'S'), ("Jocileide", 1.69, 18, 'S')]
 -- Escreva funções que, dada a lista pessoas, retornem:
@@ -290,24 +290,26 @@ notasTroco troco = [x:xs | x<-disponiveis, x<=troco, xs<-notasTroco(troco-x)]
 --possível solução para o problema de 4 rainhas em um tabuleiro 4x4, onde: a 1a rainha é posicionada na 1a coluna e 3a linha, a 2a rainha é posicionada na 2a coluna e 1a linha, a 3a rainha é posicionada na 3a coluna e 4a linha e a 4a rainha é posicionada na 4a coluna e 2a linha. Note que essa não é a única solução para a instância de 4 rainhas e a lista [3,1,4,2]
 --é uma sub-lista da lista de saída.
 
-verificaDiagonalDesc::[Int]->Int->Int->Int->Bool
-verificaDiagonalDesc [] _ _ _ = False
-verificaDiagonalDesc (x:xs) linha coluna index
+verificaDiagonalDesc::([Int],Int,Int,Int)->Bool
+verificaDiagonalDesc ([],_,_,_) = False
+verificaDiagonalDesc ((x:xs),linha,coluna,index)
   | x == (index + linha - coluna) = True
-  | otherwise = False || verificaDiagonalDesc xs linha coluna (index+1)
+  | otherwise = False || verificaDiagonalDesc(xs,linha,coluna,(index+1))
 
-verificaDiagonalAsc::[Int]->Int->Int->Int->Bool
-verificaDiagonalAsc [] _ _ _ = False
-verificaDiagonalAsc (x:xs) linha coluna index
+verificaDiagonalAsc::([Int],Int,Int,Int)->Bool
+verificaDiagonalAsc ([],_,_,_) = False
+verificaDiagonalAsc ((x:xs),linha,coluna,index)
   | x == (linha + coluna - index) = True
-  | otherwise = False || verificaDiagonalAsc xs linha coluna (index+1)
+  | otherwise = False || verificaDiagonalAsc (xs,linha,coluna,(index+1))
 
-verificaLinha::[Int]->Int->Bool
-verificaLinha listaPosic linha = elem linha listaPosic
+verificaLinha::([Int],Int)->Bool
+verificaLinha (listaPosic,linha) = elem linha listaPosic
 
 nRainhas::Int->[[Int]]
-nRainhas 0 = [[]]
-nRainhas n = [x:xs | x<-[1..n], y<-[1..n], xs<-nRainhas(n-1), verificaDiagonalAsc(xs x y 1), verificaDiagonalDesc(xs x y 1), verificaLinha(xs x)]
+nRainhas n = lista n
+  where 
+    lista 0 = [[]]
+    lista k = [x:xs | x<-[1..n], xs<-lista(k-1), (verificaDiagonalAsc(xs,x,k,k+1) || verificaDiagonalDesc(xs,x,k,k+1) || verificaLinha(xs,x)) == False]
 
 main :: IO ()
 main = return ()
