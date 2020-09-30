@@ -1,215 +1,180 @@
--- 1) Refaça as seguintes funções dos roteiros 2, 3 e 4, utilizando o comando
--- “where” para definições locais (incluindo funções auxiliares que são
--- necessárias na solução da função principal): 
+--1) Usando a função map, escreva a função paridade a seguir que recebe uma
+--lista de inteiros l e retorna uma lista contendo os valores booleanos que indicam
+--a paridade dos elementos de l.
+
+paridade::[Int]->[Bool]
+paridade lista = map even lista
 
 
---a) Escreva a função valida que indica se uma data é válida ou não. 
+-- 2) Usando a função map, escreva a função prefixos a seguir que recebe uma
+-- lista de strings l e retorna uma lista contendo os três primeiros caracteres de
+-- cada elemento de l.
 
-type Data = (Int, Int, Int)
+prefixos::[String]->[String]
+prefixos lista = map (take 3) lista
 
-valida::Data->Bool
-valida (dia,mes,ano)
-  | dia >= 1 && dia <= 31 && (mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12) = True
-  | dia >= 1 && dia <= 30 && (mes == 4 || mes == 6 || mes == 9 || mes == 11) = True
-  | dia >= 1 && dia <= 28 && mes == 2 && not (bissexto ano) = True
-  | dia >= 1 && dia <= 29 && mes == 2 && (bissexto ano) = True
-  | otherwise = False
-  where
-  bissexto ano
-    | (mod ano 400 == 0) = True
-    | (mod ano 4 == 0) && (mod ano 100 /= 0) = True
-    | otherwise = False
+-- 3) Usando a função map, escreva a função saudacao a seguir que recebe uma
+-- lista de nomes (strings) l e retorna uma lista contendo cada elemento de l
+-- concatenado com a saudação “Oi “ na frente de cada nome
 
--- b) Escreva a função bissextos a seguir que recebe uma lista de inteiros e retorna uma lista com os valores que representam anos bissextos.
+saudacao::[String]->[String]
+saudacao lista = map ("Oi " ++) lista
 
-bissextos::[Int]->[Int]
-bissextos lista 
-  | lista == [] = []
-  | eh_bissexto x = x: (bissextos xs)
-  | otherwise = bissextos xs
-  where 
-      (x:xs) = lista
-      eh_bissexto ano
-        | (mod ano 400 == 0) = True
-        | (mod ano 4 == 0) && (mod ano 100 /= 0) = True
-        | otherwise = False
+-- 4) Reescreva a definição da função filter que já faz parte da biblioteca
+-- padrão do Haskell, chamando-a de filtrar. Além disso, defina a função filtrar
+-- usando lista por compreensão. 
 
--- c) Escreva a função atrasados que recebe um parâmetro do tipo Emprestimos e a Data atual, e retorna uma lista com todos os empréstimos atrasados.
+filtrar::(a -> Bool)->[a]->[a]
+filtrar f lista = [x | x<-lista, f(x)]
 
-type Emprestimo = (String, String, Data, Data, String)
-type Emprestimos = [Emprestimo]
-bdEmprestimo::Emprestimos
-bdEmprestimo = [("H123C9","BSI945",(12,9,2009),(20,09,2009),"aberto"), ("L433C5","BCC021",(01,9,2009),(10,09,2009),"encerrado"), ("M654C3","BCC008",(04,9,2009),(15,09,2009),"aberto")]
+-- 5) Usando a função filter, escreva a função pares que recebe uma lista de
+-- inteiros lst e e retorna uma lista contendo os elementos pares de lst.
 
-atrasados::Emprestimos->Data->Emprestimos
-atrasados listaEmprestados data_atual  
-  | listaEmprestados == [] = []
-  | (precede data_devolucao data_atual) && estado == "aberto" = x:(atrasados xs data_atual)
-  | otherwise = atrasados xs data_atual
-  where 
-     (x:xs) = listaEmprestados
-     (_,_,_,data_devolucao,estado) = x
-     precede (d1,m1,a1) (d2,m2,a2)
-        | a1 < a2 = True
-        | a1 > a2 = False
-        | m1 < m2 = True
-        | m2 > m1 = False
-        | d1 < d2 = True
-        | d1 > d2 = False
-        | otherwise = False
+pares::[Int]->[Int]
+pares list = filtrar even list
 
--- d) Faça uma segunda definição da função recursiva fibo2 que retorna
--- o n-ésimo termo da sequência de Fibonacci utilizando recursividade
--- e os conceitos a seguir (use a função passo(x,y)).
+-- 6) Usando a função filter, escreva a função solucoes a seguir que recebe uma
+-- lista de inteiros l e retorna uma lista contendo os valores que satisfazem a equação
+-- (5*x + 6) < (x*x). Use uma expressão lambda (função anônima) para
+-- representar a função que realiza o teste do filtro.
 
-fibo2::Int->Int
-fibo2 n = x 
-  where 
-    (x,_) = fibo n
-    passo(x,y) = (y, x+y)
-    fibo k 
-     | k == 0 = (0,1)
-     | otherwise = passo(fibo(k-1))
+solucoes::[Int]->[Int]
+solucoes l = filter (\x -> (5*x +6) < (x*x)) l
 
-e) Escreva a função fatorial usando a função prodIntervalo.
+-- 7) Usando a função foldr1, escreva a função maior a seguir que recebe uma lista e
+-- retorna seu maior elemento.
 
-fatorial::Int->Int
-fatorial n = prodIntervalo [1..n]
-  where
-    prodIntervalo [] = 1
-    prodIntervalo(x:xs) = x*(prodIntervalo xs)
+maior::Ord a => [a] -> a
+maior lista = foldr1 max lista
 
------------------------------------------------------------------------------------------------------------------------------
+-- 8) Usando a função foldr, escreva a função menor_min10 a seguir que recebe
+-- uma lista e retorna o menor elemento da lista, desde que este não acima de 10, Se o
+-- menor elemento for um valor acima de 10, retorna 10. 
 
--- 2) Refaça as funções do exercício 1, utilizando o comando “let” para
--- definições locais (incluindo funções auxiliares que são necessárias na
--- solução da função principal). Repetir para os itens “a” a “e”. 
+menor_min10::(Ord a, Num a) => [a] -> a
+menor_min10 lista = foldr1 min ([10]++[x | x<-lista, x<10])
 
+-- 9) Usando a função foldr, escreva a função junta_silabasplural a seguir
+-- que recebe uma lista de sílabas (strings) e retorna uma palavra (string) formada pela
+-- concatenação das sílabas e incluindo um “s” no final . 
 
---a) Escreva a função valida que indica se uma data é válida ou não. 
+junta_silabas_plural::[String]->String
+junta_silabas_plural lista = foldr1 (++) (lista++["s"])
 
-valida::Data->Bool
-valida (dia,mes,ano) = 
-  let 
-    bissexto ano
-      | (mod ano 400 == 0) = True
-      | (mod ano 4 == 0) && (mod ano 100 /= 0) = True
-      | otherwise = False
-    verifica_data (dia, mes, ano)
-      | dia >= 1 && dia <= 31 && (mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12) = True
-      | dia >= 1 && dia <= 30 && (mes == 4 || mes == 6 || mes == 9 || mes == 11) = True
-      | dia >= 1 && dia <= 28 && mes == 2 && not (bissexto ano) = True
-      | dia >= 1 && dia <= 29 && mes == 2 && (bissexto ano) = True
-      | otherwise = False
-  in 
-    verifica_data (dia, mes, ano)
-	
--- b) Escreva a função bissextos a seguir que recebe uma lista de inteiros e retorna uma lista com os valores que representam anos bissextos.
+-- 10) Implemente as funções de ordenação bubblesort, selectionsort,
+-- insertionsort e quicksort, conforme as definições apresentadas no
+-- material de aula (ordenação crescente). Posteriormente,teste cada função
+-- com os seguintes exemplos de listas e observe a diferença de desempenho
+-- (tempo de processamento, dependendo da lista que é fornecida como
+-- entrada.
 
-bissextos::[Int]->[Int]
-bissextos lista =
-  let 
-    eh_bissexto ano
-      | (mod ano 400 == 0) = True
-      | (mod ano 4 == 0) && (mod ano 100 /= 0) = True
-      | otherwise = False
-  in [x | x <- lista, eh_bissexto x]
-	
--- c) Escreva a função atrasados que recebe um parâmetro do tipo Emprestimos e a Data atual, e retorna uma lista com todos os empréstimos atrasados.
+----------------------------------------------------------bubblesort
+bubblesort::Ord a => [a] -> [a]
+bubblesort [] = []
+bubblesort lista = bolhaOrd lista (length lista)
 
-type Emprestimo = (String, String, Data, Data, String)
-type Emprestimos = [Emprestimo]
-bdEmprestimo::Emprestimos
-bdEmprestimo = [("H123C9","BSI945",(12,9,2009),(20,09,2009),"aberto"), ("L433C5","BCC021",(01,9,2009),(10,09,2009),"encerrado"), ("M654C3","BCC008",(04,9,2009),(15,09,2009),"aberto")]
+bolhaOrd::Ord a => [a]->Int->[a]
+bolhaOrd lista 0 = lista
+bolhaOrd lista n = bolhaOrd (troca lista) (n-1)
 
-atrasados::Emprestimos->Data->Emprestimos
-atrasados listaEmprestados data_atual = 
-  let
-    precede (d1,m1,a1) (d2,m2,a2)
-      | a1 < a2 = True
-      | a1 > a2 = False
-      | m1 < m2 = True
-      | m2 > m1 = False
-      | d1 < d2 = True
-      | d1 > d2 = False
-      | otherwise = False
-  in [x | x<- listaEmprestados, let (_,_,_,data_devolucao,estado) = x, (precede data_devolucao data_atual) && estado == "aberto" ] 
-
--- d) Faça uma segunda definição da função recursiva fibo2 que retorna
--- o n-ésimo termo da sequência de Fibonacci utilizando recursividade
--- e os conceitos a seguir (use a função passo(x,y)).
-
-fibo2::Int->Int
-fibo2 n =
-  let
-    passo(x,y) = (y, x+y)
-    fibo k 
-      | k == 0 = (0,1)
-      | otherwise = passo(fibo(k-1))
-    primeiro (x,y) = x
-  in primeiro(fibo n) 
+troca::Ord a => [a]->[a]
+troca [x] = [x]
+troca (x:y:zs)
+  | x> y = y : troca (x:zs)
+  | otherwise = x : troca (y:zs)
  
-e) Escreva a função fatorial usando a função prodIntervalo.
 
-fatorial::Int->Int
-fatorial n = 
-  let 
-    prodIntervalo [] = 1
-    prodIntervalo(x:xs) = x*(prodIntervalo xs)
-    listar 0 = []
-    listar n = n:(listar(n-1))
-  in prodIntervalo(listar n)
+----------------------------------------------------------selectionsort
+selectionsort::(Ord a) => [a]->[a]
+selectionsort [] = []
+selectionsort xs =[x] ++ selectionsort (remove x xs)
+        where x = minimo xs
+
+remove::(Ord a) => a->[a]->[a]
+remove a [] = []
+remove a (x:xs)
+  | a==x = xs
+  | otherwise = x:(remove a xs)
+
+minimo::(Ord a) => [a]->a
+minimo [] = undefined
+minimo [x] = x
+minimo (x:xs)
+  | x <= (minimo xs) = x
+  | otherwise = minimo xs
   
--------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------insertionsort
+insertionsort::(Ord a) => [a] ->[a]
+insertionsort [] = []
+insertionsort (x:xs) = insereOrd x (insertionsort xs)
 
--- 3) Aplicar Beta-redução nas expressões lambda a seguir: 
+insereOrd::(Ord a) => a -> [a] -> [a]
+insereOrd x [] = [x]
+insereOrd x (y:ys)
+  | x <= y = (x:y:ys)
+  | otherwise = y: (insereOrd x ys)
 
--- 3.1(\x. 2*x + 1) 3
--- (\x. 2*x + 1) 3
--- 2*3 + 1
--- 6+1
--- 7
+-----------------------------------------------------------quicksort
+quicksort::(Ord a) => [a] -> [a]
+quicksort [] = []
+quicksort (s:xs) = quicksort [x|x <- xs, x<s] ++ [s] ++ quicksort [x|x <- xs, x >= s]
 
--------------------------------------------------------
--- 3.2 (\xy. x-y) 5 7
--- (\xy. x-y) 5 7
--- 5-7
--- -2
+--11) Altere cada um dos algoritmos de ordenação do exercício 10 para também
+--contabilizar e retornar o número de comparações (do tipo x <= y) feitas pelo
+--algoritmo em sua execução. Teste com as listas dadas. Exemplo:
 
--------------------------------------------------------
--- 3.3 (\yx. x-y) 5 7
--- (\yx. x-y) 5 7
--- 7-5
--- 2
 
--------------------------------------------------------
--- 3.4 (\xy. x-y) (\z. z/2)
--- (\xy. x-y) (\z. z/2)
--- (\y. z/2 - y)
--- Não exite redução possível pois não existem valores suficientes que possam ser aplicados
+----------------------------------------------------------bubblesort
+bubblesort::Ord a => [a] -> [a]
+bubblesort [] = []
+bubblesort lista = bolhaOrd lista (length lista)
 
--------------------------------------------------------
--- 3.5 (\xy. x-y)((\z.z/2) 6) 1
--- (\xy. x-y)((\z.z/2) 6) 1
--- (\xy. x-y)((\z.z/2) 6) 1
--- (\xy. x-y)(6/2) 1
--- (\xy. x-y) 3 1
--- (3 - 1)
--- 2
+bolhaOrd::Ord a => [a]->Int->[a]
+bolhaOrd lista 0 = lista
+bolhaOrd lista n = bolhaOrd (troca lista) (n-1)
 
--------------------------------------------------------
--- 3.6 (\x.\y. - x y) 9 4
--- (\x.\y. - x y) 9 4
--- (\y. - 9 y) 4
--- (- 9 4)
--- 5
+troca::Ord a => [a]->[a]
+troca [x] = [x]
+troca (x:y:zs)
+  | x> y = y : troca (x:zs)
+  | otherwise = x : troca (y:zs)
+ 
 
--------------------------------------------------------
--- 3.7 (\x.xx)(\y. y)
--- (\x.xx)(\y. y)
--- (\y. y)(\y. y)
--- (\y. y)
--- Não exite redução possível pois não existem valores suficientes que possam ser aplicados
+----------------------------------------------------------selectionsort
+selectionsort::(Ord a) => [a]->[a]
+selectionsort [] = []
+selectionsort xs =[x] ++ selectionsort (remove x xs)
+        where x = minimo xs
+
+remove::(Ord a) => a->[a]->[a]
+remove a [] = []
+remove a (x:xs)
+  | a==x = xs
+  | otherwise = x:(remove a xs)
+
+minimo::(Ord a) => [a]->a
+minimo [] = undefined
+minimo [x] = x
+minimo (x:xs)
+  | x <= (minimo xs) = x
+  | otherwise = minimo xs
+  
+----------------------------------------------------------insertionsort
+insertionsort::(Ord a) => [a] ->[a]
+insertionsort [] = []
+insertionsort (x:xs) = insereOrd x (insertionsort xs)
+
+insereOrd::(Ord a) => a -> [a] -> [a]
+insereOrd x [] = [x]
+insereOrd x (y:ys)
+  | x <= y = (x:y:ys)
+  | otherwise = y: (insereOrd x ys)
+
+-----------------------------------------------------------quicksort
+quicksort::(Ord a) => [a] -> [a]
+quicksort [] = []
+quicksort (s:xs) = quicksort [x|x <- xs, x<s] ++ [s] ++ quicksort [x|x <- xs, x >= s]
+
 
 main :: IO ()
 main = return ()
